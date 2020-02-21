@@ -1,6 +1,6 @@
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json._
 
 case class Task(id: Long, title: String, completed: Boolean, priority: String)
 
