@@ -21,28 +21,27 @@ class TasksController @Inject() (
     }  // otherwise, return Not Found
   }
 
-  // def all: Action[AnyContent] = { implicit request =>
-  //   tasksDAO.tasksByUserId(request.user.id).map{ tasks => Ok(Json.toJson(tasks)) }
+  def createTask = Action(parse.json[Task]).async { implicit request => 
+    tasksDAO.insert(request.body).map(task => Ok(Json.toJson(task)))
+  }
+
+  def deleteTask(id: Long) = Action.async { implicit request =>
+    tasksDAO.delete(id).map(id => Ok(Json.obj("id" -> id)))
+  }
+
+  def updateTaskTitle(id: Long, newTitle: String) = Action.async { implicit request =>
+    tasksDAO.updateTitle(id, newTitle).map(id => Ok(Json.obj("id" -> id)))
+  }
+
+  def updateCompletedStatus(id: Long, newCompletedStatus: Boolean) = Action.async { implicit request =>
+    tasksDAO.updateCompletedStatus(id, newCompletedStatus).map(id => Ok(Json.obj("id" -> id)))
+  }
+
+  // def updateTask(id: Long, newTitle: String) = Action.async { implicit request =>
+  //   tasksDAO.update(id, newTitle).map(id => Ok(Json.obj("id" -> id)))
   // }
 
-
-  // val catForm = Form(
-  //   mapping(
-  //     "name" -> text(),
-  //     "color" -> text())(Cat.apply)(Cat.unapply))
-
-  // val dogForm = Form(
-  //   mapping(
-  //     "name" -> text(),
-  //     "color" -> text())(Dog.apply)(Dog.unapply))
-
-  // def insertCat = Action.async { implicit request =>
-  //   val cat: Cat = catForm.bindFromRequest.get
-  //   catDao.insert(cat).map(_ => Redirect(routes.Application.index))
-  // }
-
-  // def insertDog = Action.async { implicit request =>
-  //   val dog: Dog = dogForm.bindFromRequest.get
-  //   dogDao.insert(dog).map(_ => Redirect(routes.Application.index))
+  // def updateTask(id: Long) = Action(parse.json[Task]).async { implicit request =>
+  //   tasksDAO.update(id, request.body).map(id => Ok(Json.obj("id" -> id)))
   // }
 }

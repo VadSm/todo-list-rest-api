@@ -31,6 +31,50 @@ class TasksDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   def all(): Future[Seq[Task]] = db.run(tasks.result)
 
+  def insert(task: Task): Future[Task] = db.run {
+    (tasks.map(task => (task.title, task.completed, task.priority))
+      returning tasks.map(_.id)
+      into ((nameDone, id) => Task(id, nameDone._1, nameDone._2, nameDone._3))
+    ) += (task.title, task.completed, task.priority)
+  }
+
+  def delete(id: Long): Future[Long] =
+    db.run(tasks.filter(_.id === id).delete).map(_ => (id))
+
+  // def update(id: Long, title: String): Future[Task] = db.run {
+  //   val taskToUpdate: Computer = tasks.filter(_.id === id).map(_ => task).copy(Some(title))
+  //   db.run(tasks.filter(_.id === id).update(taskToUpdate)).map(_ => ())
+
+  //   // tasks.filter(_.id === id).update 
+  // }
+
+  // def update(id: Long, newTitle: String): Future[Int] =
+  //   db.run(tasks.filter(_.id === id).map(_.title).update(newTitle))
+
+  // def findById(id: Long): Future[Task] =
+  //   db.run(tasks.filter(_.id === id))
+
+  // def update(id: Long, updatedTask: Task): Future[Int] = db.run {
+  //   tasks.filter(_.id === id).map(task => (task.title, task.completed)).update(updatedTask.title, updatedTask.completed)
+  //   // tasks.filter(_.id === id).update(updatedTask.title, updatedTask.completed)
+  // }
+
+  def updateTitle(id: Long, newTitle: String): Future[Int] = db.run {
+    tasks.filter(_.id === id).map(_.title).update(newTitle)
+  }
+
+  def updateCompletedStatus(id: Long, newCompletedStatus: Boolean): Future[Int] = db.run {
+    tasks.filter(_.id === id).map(_.completed).update(newCompletedStatus)
+  }
+
+    // val q = for { task <- tasks if task.id === id } yield task.title
+    // val updateAction = q.update(newTitle)
+
+    // val sql = q.updateStatement
+
+    // tasks.filter(_.id === id).update(updatedTask.title, updatedTask.completed)
+  }
+
   // /** Construct the Map[String,String] needed to fill a select options set */
   // def options(): Future[Seq[(String, String)]] = {
   //   val query = (for {
@@ -47,6 +91,6 @@ class TasksDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
   // /** Insert new companies */
   // def insert(companies: Seq[Company]): Future[Unit] =
   //   db.run(this.companies ++= companies).map(_ => ())
-}
+
 
 
