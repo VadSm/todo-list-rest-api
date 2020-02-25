@@ -37,6 +37,10 @@ class TasksController @Inject() (
     tasksDAO.updateCompletedStatus(id, newCompletedStatus).map(id => Ok(Json.obj("id" -> id)))
   }
 
+  def updateAllTasksCompletedStatus(newCompletedStatus: Boolean) = Action.async { implicit request =>
+    tasksDAO.updateAllCompletedStatus(newCompletedStatus).map(status => Ok(Json.obj("status" -> status)))
+  }
+
   // def updateTask(id: Long, newTitle: String) = Action.async { implicit request =>
   //   tasksDAO.update(id, newTitle).map(id => Ok(Json.obj("id" -> id)))
   // }

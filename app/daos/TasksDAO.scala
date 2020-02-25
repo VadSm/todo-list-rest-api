@@ -67,6 +67,10 @@ class TasksDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
     tasks.filter(_.id === id).map(_.completed).update(newCompletedStatus)
   }
 
+  def updateAllCompletedStatus(newCompletedStatus: Boolean): Future[Boolean] = db.run {
+    tasks.map(_.completed).update(newCompletedStatus).map(_ => newCompletedStatus)
+  }
+
     // val q = for { task <- tasks if task.id === id } yield task.title
     // val updateAction = q.update(newTitle)
 
