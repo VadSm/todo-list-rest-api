@@ -41,24 +41,6 @@ class TasksDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
   def delete(id: Long): Future[Long] =
     db.run(tasks.filter(_.id === id).delete).map(_ => (id))
 
-  // def update(id: Long, title: String): Future[Task] = db.run {
-  //   val taskToUpdate: Computer = tasks.filter(_.id === id).map(_ => task).copy(Some(title))
-  //   db.run(tasks.filter(_.id === id).update(taskToUpdate)).map(_ => ())
-
-  //   // tasks.filter(_.id === id).update 
-  // }
-
-  // def update(id: Long, newTitle: String): Future[Int] =
-  //   db.run(tasks.filter(_.id === id).map(_.title).update(newTitle))
-
-  // def findById(id: Long): Future[Task] =
-  //   db.run(tasks.filter(_.id === id))
-
-  // def update(id: Long, updatedTask: Task): Future[Int] = db.run {
-  //   tasks.filter(_.id === id).map(task => (task.title, task.completed)).update(updatedTask.title, updatedTask.completed)
-  //   // tasks.filter(_.id === id).update(updatedTask.title, updatedTask.completed)
-  // }
-
   def updateTitle(id: Long, newTitle: String): Future[Int] = db.run {
     tasks.filter(_.id === id).map(_.title).update(newTitle)
   }
@@ -71,6 +53,9 @@ class TasksDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
     tasks.map(_.completed).update(newCompletedStatus).map(_ => newCompletedStatus)
   }
 
+  def deleteAllCompleted() = 
+    db.run(tasks.filter(_.completed === true).delete)
+
     // val q = for { task <- tasks if task.id === id } yield task.title
     // val updateAction = q.update(newTitle)
 
@@ -78,23 +63,6 @@ class TasksDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
     // tasks.filter(_.id === id).update(updatedTask.title, updatedTask.completed)
   }
-
-  // /** Construct the Map[String,String] needed to fill a select options set */
-  // def options(): Future[Seq[(String, String)]] = {
-  //   val query = (for {
-  //     company <- companies
-  //   } yield (company.id, company.name)).sortBy( /*name*/ _._2)
-
-  //   db.run(query.result).map(rows => rows.map { case (id, name) => (id.toString, name) })
-  // }
-
-  // /** Insert a new company */
-  // def insert(company: Company): Future[Unit] =
-  //   db.run(companies += company).map(_ => ())
-
-  // /** Insert new companies */
-  // def insert(companies: Seq[Company]): Future[Unit] =
-  //   db.run(this.companies ++= companies).map(_ => ())
 
 
 

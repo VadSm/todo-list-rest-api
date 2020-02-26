@@ -15,10 +15,7 @@ class TasksController @Inject() (
   controllerComponents: ControllerComponents)(implicit executionContext: ExecutionContext) extends AbstractController(controllerComponents) {
 
   def all = Action.async { implicit request =>
-    tasksDAO.all() map { task =>
-      // If the task was found, return a 200 with the task data as JSON
-      Ok(Json.toJson(task))
-    }  // otherwise, return Not Found
+    tasksDAO.all().map(task => Ok(Json.toJson(task)))
   }
 
   def createTask = Action(parse.json[Task]).async { implicit request => 
@@ -39,6 +36,10 @@ class TasksController @Inject() (
 
   def updateAllTasksCompletedStatus(newCompletedStatus: Boolean) = Action.async { implicit request =>
     tasksDAO.updateAllCompletedStatus(newCompletedStatus).map(status => Ok(Json.obj("status" -> status)))
+  }
+
+  def deleteAllCompletedTasks = Action.async { implicit request =>
+    tasksDAO.deleteAllCompleted().map(_ => Ok(Json.obj("status" -> "Success")))
   }
 
   // def updateTask(id: Long, newTitle: String) = Action.async { implicit request =>
