@@ -31,37 +31,44 @@ class TasksDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   def all(): Future[Seq[Task]] = db.run(tasks.result)
 
-  def insert(task: Task): Future[Task] = db.run {
-    (tasks.map(task => (task.title, task.completed, task.priority))
-      returning tasks.map(_.id)
-      into ((nameDone, id) => Task(id, nameDone._1, nameDone._2, nameDone._3))
-    ) += (task.title, task.completed, task.priority)
+  def create(task: Task): Future[Task] = 
+    db.run(tasks returning tasks.map(_.id) += task).map(id => task.copy(id))
+
+  def delete(id: Long) = 
+    db.run(tasks.filter(_.id === id).delete)
+
+  def update(updatedTask: Task): Future[Option[Task]] = db.run {
+    tasks.filter(_.id === updatedTask.id).update(updatedTask).map {
+      case 0 => None
+      case _ => Some(updatedTask)
+    }
   }
 
-  def delete(id: Long): Future[Long] =
-    db.run(tasks.filter(_.id === id).delete).map(_ => (id))
-
-  def updateTitle(id: Long, newTitle: String): Future[Int] = db.run {
-    tasks.filter(_.id === id).map(_.title).update(newTitle)
-  }
-
-  def updateCompletedStatus(id: Long, newCompletedStatus: Boolean): Future[Int] = db.run {
-    tasks.filter(_.id === id).map(_.completed).update(newCompletedStatus)
-  }
-
-  def updateAllCompletedStatus(newCompletedStatus: Boolean): Future[Boolean] = db.run {
+  def updateAllStatuses(newCompletedStatus: Boolean): Future[Boolean] = db.run {
     tasks.map(_.completed).update(newCompletedStatus).map(_ => newCompletedStatus)
   }
 
   def deleteAllCompleted() = 
     db.run(tasks.filter(_.completed === true).delete)
 
-    // val q = for { task <- tasks if task.id === id } yield task.title
-    // val updateAction = q.update(newTitle)
+  // def updateTitle(id: Long, newTitle: String): Future[Int] = db.run {
+  //   tasks.filter(_.id === id).map(_.title).update(newTitle)
+  // }
 
-    // val sql = q.updateStatement
+  // def updateCompletedStatus(id: Long, newCompletedStatus: Boolean): Future[Int] = db.run {
+  //   tasks.filter(_.id === id).map(_.completed).update(newCompletedStatus)
+  // }
 
-    // tasks.filter(_.id === id).update(updatedTask.title, updatedTask.completed)
+
+
+
+  // def insert(task: Task): Future[Task] = db.run {
+  //   (tasks.map(task => (task.title, task.completed, task.priority))
+  //     returning tasks.map(_.id)
+  //     into ((nameDone, id) => Task(id, nameDone._1, nameDone._2, nameDone._3))
+  //   ) += (task.title, task.completed, task.priority)
+  // }
+
   }
 
 
