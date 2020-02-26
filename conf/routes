@@ -13,11 +13,5 @@ DELETE  /deleteAllCompleted                        controllers.TasksController.d
 PUT     /update                                    controllers.TasksController.updateTask
 PUT     /updateAllStatuses/:newCompletedStatus     controllers.TasksController.updateAllStatuses(newCompletedStatus: Boolean)
 
-# PUT     /updateTitle/:id/:newTitle                 controllers.TasksController.updateTaskTitle(id: Long, newTitle: String)
-# PUT     /updateStatus/:id/:newCompletedStatus      controllers.TasksController.updateCompletedStatus(id: Long, newCompletedStatus: Boolean)
-# PUT     /testUpdate/:id/:newTitle/:newCompletedStatus       controllers.TasksController.testUpdate(id: Long, newTitle: String, newCompletedStatus: Boolean)
-
-
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
