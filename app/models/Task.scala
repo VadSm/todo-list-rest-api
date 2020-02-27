@@ -9,7 +9,7 @@ object Task {
       id <- (__ \ "id").readWithDefault[Long](0L)
       title <- (__ \ "title").read[String]
       completed <- (__ \ "completed").readWithDefault[Boolean](false)
-      priority <- (__ \ "priority").readWithDefault[String]("Medium")
+      priority <- (__ \ "priority").readWithDefault[String]("medium")
     } yield Task(id, title, completed, priority)
 
   implicit val writes: Writes[Task] = task => Json.obj(
