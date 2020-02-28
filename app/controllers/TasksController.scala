@@ -23,15 +23,15 @@ class TasksController @Inject() (
   }
 
   def deleteTask(id: Long) = Action.async { implicit request =>
-    tasksDAO.delete(id).map(id => Ok(Json.obj("status" -> "Success")))
+    tasksDAO.delete(id).map(_ => Ok(Json.obj("status" -> "Success")))
   }
 
   def updateTask = Action(parse.json[Task]).async { implicit request =>
-    tasksDAO.update(request.body).map(task => Ok(Json.toJson(task)))
+    tasksDAO.update(request.body).map(_ => Ok(Json.obj("status" -> "Success")))
   }
 
   def updateAllStatuses(newCompletedStatus: Boolean) = Action.async { implicit request =>
-    tasksDAO.updateAllStatuses(newCompletedStatus).map(status => Ok(Json.obj("status" -> "Success")))
+    tasksDAO.updateAllStatuses(newCompletedStatus).map(_ => Ok(Json.obj("status" -> "Success")))
   }
 
   def deleteAllCompletedTasks = Action.async { implicit request =>

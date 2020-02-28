@@ -37,11 +37,8 @@ class TasksDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
     def delete(id: Long) = 
       db.run(tasks.filter(_.id === id).delete)
 
-    def update(updatedTask: Task): Future[Option[Task]] = db.run {
-      tasks.filter(_.id === updatedTask.id).update(updatedTask).map {
-        case 0 => None
-        case _ => Some(updatedTask)
-      }
+    def update(updatedTask: Task) = db.run {
+      tasks.filter(_.id === updatedTask.id).update(updatedTask)
     }
 
     def updateAllStatuses(newCompletedStatus: Boolean) =  
